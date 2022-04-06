@@ -11,7 +11,7 @@ api = Api(app)
 friends_csv = pd.read_csv("Data\friends_episodes_v2.csv")
 friends_csv.to_json("Data\friends.json")
 FRIENDS = pd.read_json("Data\friends.json")
-# create serial id for friends data
+# Para funcionar precisa atribuir um id (sequencial) a cada linha do csv/objeto do json
 
 
 
@@ -33,38 +33,52 @@ parser.add_argument('Votes', type=float)
 
 # Todo
 # shows a single todo item and lets you delete a todo item
-class Country(Resource):
-    def get(self, country_id):
-        abort_if_country_doesnt_exist(country_id)
-        return COUNTRIES[country_id]
+class Friends(Resource):
+    def get(self, friends_id):
+        abort_if_data_doesnt_exist(friends_id)
+        return FRIENDS[friends_id]
 
-    def delete(self, country_id):
-        abort_if_country_doesnt_exist(country_id)
-        del COUNTRIES[country_id]
+    def delete(self, friends_id):
+        abort_if_data_doesnt_exist(friends_id)
+        del FRIENDS[friends_id]
         return '', 204
 
-    def put(self, country_id):
+    def put(self, friends_id):
         args = parser.parse_args()
-        content = {'name': args['name'], 'population': args['population']}
-        COUNTRIES[country_id] = content
+        content = {'Year_of_prod': args['Year_of_prod'], 
+                    'Season': args['Season'], 
+                    'Episode_Title': args['Episode_Title'],
+                    'Duration': args['Duration'],
+                    'Summary': args['Summary'],
+                    'Director': args['Director'],
+                    'Stars': args['Stars'],
+                    'Votes': args['Votes']}
+        FRIENDS[friends_id] = content
         return content, 201
 
 
-class CountryList(Resource):
+class FriendsList(Resource):
     def get(self):
-        return COUNTRIES
+        return FRIENDS
 
     def post(self):
         args = parser.parse_args()
-        country_id = max(COUNTRIES.keys()) + 1
-        COUNTRIES[country_id] = {'name': args['name'], 'population': args['population']}
-        return COUNTRIES[country_id], 201
+        friends_id = max(FRIENDS.keys()) + 1
+        FRIENDS[friends_id] = {'Year_of_prod': args['Year_of_prod'], 
+                                'Season': args['Season'], 
+                                'Episode_Title': args['Episode_Title'],
+                                'Duration': args['Duration'],
+                                'Summary': args['Summary'],
+                                'Director': args['Director'],
+                                'Stars': args['Stars'],
+                                'Votes': args['Votes']}
+        return FRIENDS[friends_id], 201
 
 ##
 ## Actually setup the Api resource routing here
 ##
-api.add_resource(CountryList, '/country')
-api.add_resource(Country, '/country/<int:country_id>')
+api.add_resource(FriendsList, '/friends')
+api.add_resource(Friends, '/friends/<int:friends_id>')
 
 
 if __name__ == '__main__':
